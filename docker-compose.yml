@@ -38,7 +38,7 @@ services:
       - AZURE_AD_TENANT_ID=f90c4647-886f-4b4c-b2eb-555df9ec4e81
       - NEXTAUTH_SECRET=mysecretkey_asset_management
       - API_BASE_URL=http://backend:8080/api
-      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_URL=http://asset.tonkla.studio
 
       - NEXTAUTH_URL_INTERNAL=http://127.0.0.1:3000
       - NODE_OPTIONS=--dns-result-order=ipv4first
