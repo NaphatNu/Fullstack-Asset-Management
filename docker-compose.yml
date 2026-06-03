@@ -1,17 +1,14 @@
-
 services:
-
   postgres-db:
     image: postgres:16-alpine
-    container_name: my_postgres
+    container_name: postgres-db
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mysecurepassword
-      POSTGRES_DB: mydbname
+    # ports:
+    #   - "5433:5432"
+    env_file:
+      - .env.docker
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # 🔥 หัวใจสำคัญ: ส่งไฟล์ Schema เข้าไปให้ Docker รันสร้างตารางตอนเปิดเครื่องครั้งแรก
       - ./init-schema.sql:/docker-entrypoint-initdb.d/init-schema.sql
   backend:
     build: ./Asset-Management-BE
@@ -19,10 +16,10 @@ services:
     restart: unless-stopped
     ports:
       - "5000:8080"
+    env_file:
+      - .env.docker
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      # 🔌 ชี้ไปที่ชื่อบริการ "postgres-db"
-      - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=mydbname;Username=myuser;Password=mysecurepassword;
     depends_on:
       - postgres-db
 
@@ -32,17 +29,13 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    env_file:
+      - .env.docker
     environment:
-      - AZURE_AD_CLIENT_ID=fac27409-54c3-452b-aa00-1406860a1175
-      - AZURE_AD_CLIENT_SECRET=o8B8Q~y12HrFqQz~aCdUJDHhFynWhWM46i4YXcL.
-      - AZURE_AD_TENANT_ID=f90c4647-886f-4b4c-b2eb-555df9ec4e81
-      - NEXTAUTH_SECRET=mysecretkey_asset_management
       - API_BASE_URL=http://backend:8080/api
       - NEXTAUTH_URL=http://asset.tonkla.studio
-
       - NEXTAUTH_URL_INTERNAL=http://127.0.0.1:3000
       - NODE_OPTIONS=--dns-result-order=ipv4first
-
     dns:
       - 8.8.8.8
       - 8.8.4.4
