@@ -1,0 +1,57 @@
+คู่มือการติดตั้งและรันระบบด้วย Docker (Quick Start Guide)
+=====================================================
+
+1. การตั้งค่าสภาพแวดล้อม (Environment Setup)
+-------------------------------------------
+ก่อนรันระบบ คุณต้องสร้างไฟล์ `.env.docker` เพื่อกำหนดค่าพื้นฐาน:
+
+- คัดลอกไฟล์ต้นแบบ: `cp .env.docker.example .env.docker`
+- แก้ไขข้อมูลในไฟล์ `.env.docker` ตามฟอร์แมตนี้:
+
+   # ฐานข้อมูล (Postgres)
+   POSTGRES_USER=ชื่อผู้ใช้_DB
+   POSTGRES_PASSWORD=รหัสผ่าน_DB
+   POSTGRES_DB=ชื่อฐานข้อมูล
+
+   # ระบบหลังบ้าน (.NET)
+   ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=ชื่อฐานข้อมูล;Username=ชื่อผู้ใช้_DB;Password=รหัสผ่าน_DB;
+   AzureAd__TenantId=Tenant_ID_จาก_Azure
+   AzureAd__ClientId=Backend_Client_ID
+
+   # ระบบหน้าบ้าน (Next.js)
+   AZURE_AD_CLIENT_ID=Frontend_Client_ID
+   AZURE_AD_CLIENT_SECRET=Client_Secret_จาก_Azure
+   AZURE_AD_TENANT_ID=Tenant_ID_จาก_Azure
+   NEXTAUTH_SECRET=รหัสสุ่ม_32_ตัวอักษร
+
+2. ไฟล์และโฟลเดอร์ที่เกี่ยวข้องกับการรัน
+-------------------------------------------
+- docker-compose.yml : ไฟล์หลักที่สั่งรันทุกบริการ (DB, Backend, Frontend) พร้อมกัน
+- .env.docker       : ไฟล์เก็บค่าคอนฟิกและรหัสผ่านต่างๆ (ต้องสร้างเองจากข้อ 1)
+- Asset-Management-BE/ : โฟลเดอร์ซอร์สโค้ดของ Backend ที่ Docker จะนำไป Build
+- Asset-Management-FE/ : โฟลเดอร์ซอร์สโค้ดของ Frontend ที่ Docker จะนำไป Build
+- init-schema.sql    : สคริปต์ที่ Docker จะรันเพื่อสร้างตารางฐานข้อมูลในครั้งแรก
+
+3. คำสั่ง Docker ที่ต้องใช้
+-------------------------------------------
+ใช้คำสั่งเหล่านี้ใน Terminal หรือ PowerShell (ตรวจสอบว่าอยู่ที่ Root Folder ของโปรเจกต์):
+
+- สั่งรันระบบทั้งหมด (Build ครั้งแรก หรือเมื่อมีการแก้โค้ด):
+  docker-compose up -d --build
+
+- สั่งหยุดการทำงาน:
+  docker-compose down
+
+- สั่งหยุดและลบข้อมูลในฐานข้อมูลทั้งหมด (ระวัง! ข้อมูลจะหาย):
+  docker-compose down -v
+
+- ดูสถานะการทำงานของ Container:
+  docker-compose ps
+
+- ดู Logs การทำงาน (เพื่อตรวจสอบ Error):
+  docker-compose logs -f
+
+---
+เมื่อรันสำเร็จ สามารถเข้าใช้งานได้ที่:
+- Frontend: http://localhost:3000 (หรือ Domain ที่ตั้งไว้)
+- Backend API (Swagger): http://localhost:5000
