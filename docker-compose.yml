@@ -1,40 +1,46 @@
 services:
   postgres-db:
     image: postgres:16-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     container_name: postgres-db
     restart: unless-stopped
-    # ports:
-    #   - "5433:5432"
+    expose:
+      - "5432"
     env_file:
       - .env.docker
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./init-schema.sql:/docker-entrypoint-initdb.d/init-schema.sql
+
   backend:
     build: ./Asset-Management-BE
     container_name: backend
     restart: unless-stopped
-    ports:
-      - "5000:8080"
+    expose:
+      - "8080"
     env_file:
       - .env.docker
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
-      - postgres-db
+      postgres-db:
+        condition: service_healthy
 
   frontend:
     build: ./Asset-Management-FE
     container_name: frontend
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     env_file:
       - .env.docker
     environment:
       - API_BASE_URL=http://backend:8080/api
-      - NEXTAUTH_URL=http://asset.tonkla.studio
-      - NEXTAUTH_URL_INTERNAL=http://127.0.0.1:3000
+      - NEXTAUTH_URL=https://asset.tonkla.studio
+      - NEXTAUTH_URL_INTERNAL=http://frontend:3000
       - NODE_OPTIONS=--dns-result-order=ipv4first
     dns:
       - 8.8.8.8
@@ -42,6 +48,27 @@ services:
     depends_on:
       - backend
 
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    env_file:
+      - .env.docker
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+
 volumes:
   pgdata:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
     driver: local

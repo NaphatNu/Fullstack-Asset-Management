@@ -124,5 +124,5 @@ npm run dev
 │   ├── lib/               # Utilities & API Clients
 │   └── hooks/             # Custom React Hooks
 ├── docker-compose.yml     # Container Orchestration
-└── init-schema.sql        # Database Initialization Script
+└── Caddyfile              # Reverse proxy configuration
 ```

@@ -95,5 +95,5 @@ docker-compose up -d --build
 │   ├── lib/               # เครื่องมือและ API Clients
 │   └── hooks/             # Custom React Hooks
 ├── docker-compose.yml     # การจัดการ Container
-└── init-schema.sql        # สคริปต์เริ่มต้นฐานข้อมูล
+└── Caddyfile              # การตั้งค่า Reverse Proxy
 ```

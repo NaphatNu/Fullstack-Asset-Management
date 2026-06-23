@@ -1,5 +1,7 @@
 คู่มือการติดตั้งและรันระบบด้วย Docker (Quick Start Guide)
 =====================================================
+clone project : git clone --recurse-submodule https://github.com/NaphatNu/Fullstack-Asset-Management.git
+
 
 1. การตั้งค่าสภาพแวดล้อม (Environment Setup)
 -------------------------------------------
@@ -30,7 +32,8 @@
 - .env.docker       : ไฟล์เก็บค่าคอนฟิกและรหัสผ่านต่างๆ (ต้องสร้างเองจากข้อ 1)
 - Asset-Management-BE/ : โฟลเดอร์ซอร์สโค้ดของ Backend ที่ Docker จะนำไป Build
 - Asset-Management-FE/ : โฟลเดอร์ซอร์สโค้ดของ Frontend ที่ Docker จะนำไป Build
-- init-schema.sql    : สคริปต์ที่ Docker จะรันเพื่อสร้างตารางฐานข้อมูลในครั้งแรก
+- Caddyfile         : การตั้งค่า Reverse Proxy สำหรับโดเมน
+- EF Core Migrations ใน Asset-Management-BE/Migrations จะสร้างและอัปเดตตารางฐานข้อมูล
 
 3. คำสั่ง Docker ที่ต้องใช้
 -------------------------------------------
@@ -53,5 +56,5 @@
 
 ---
 เมื่อรันสำเร็จ สามารถเข้าใช้งานได้ที่:
-- Frontend: http://localhost:3000 (หรือ Domain ที่ตั้งไว้)
-- Backend API (Swagger): http://localhost:5000
+- Application: https://asset.tonkla.studio (หรือ Domain ที่ตั้งไว้)
+- Backend API ไม่เปิด port สาธารณะ และ Swagger เปิดเฉพาะ Development
