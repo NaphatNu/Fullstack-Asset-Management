@@ -38,6 +38,7 @@ services:
     env_file:
       - .env.docker
     environment:
+      - PORT=3000
       - API_BASE_URL=http://backend:8080/api
       - NEXTAUTH_URL=https://asset.tonkla.studio
       - NEXTAUTH_URL_INTERNAL=http://frontend:3000
